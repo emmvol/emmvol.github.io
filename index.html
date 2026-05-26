@@ -46,6 +46,11 @@ h1 {
 }
 
 button.answer {
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
   border: none;
   border-radius: 15px;
   padding: 18px;
@@ -144,6 +149,19 @@ button.answer:hover {
 </div>
 
   </div><script>
+window.addEventListener('error', function(e) {
+  console.error('Error detectado:', e.message);
+  document.body.innerHTML = `
+    <div style="padding:20px;font-family:Arial;background:#111;color:#fff;min-height:100vh;">
+      <h1>Error en el Quiz</h1>
+      <p><strong>Mensaje:</strong> ${e.message}</p>
+      <p><strong>Línea:</strong> ${e.lineno}</p>
+      <p>Revisa la consola del navegador para más detalles.</p>
+    </div>
+  `;
+});
+
+document.addEventListener('DOMContentLoaded', () => {
 const questions = [
 {
 q: '1. Paciente femenino de 28 años, embarazo de 12 semanas, Western Blot positiva para VIH. La TAR en embarazo reduce transmisión vertical a:',
@@ -614,6 +632,7 @@ answer: 2,
 explanation: 'Chlamydia produce daño tubario e infertilidad.'
 },
 {
+{
 q: '79. Tipo histológico más frecuente de cáncer de ovario:',
 options: ['Germinal', 'Estromal', 'Epitelial', 'Metastásico'],
 answer: 2,
@@ -634,4 +653,91 @@ let answered = false;
 const questionEl = document.getElementById('question');
 const answersEl = document.getElementById('answers');
 const counterEl = document.getElementById('counter');
-const scoreEl = document.getEleme
+const scoreEl = document.getElementById('score');
+const explanationEl = document.getElementById('explanation');
+const nextBtn = document.getElementById('nextBtn');
+
+function loadQuestion() {
+  answered = false;
+  nextBtn.disabled = true;
+  explanationEl.style.display = 'none';
+
+  const q = questions[currentQuestion];
+
+  counterEl.textContent = `Pregunta ${currentQuestion + 1} de ${questions.length}`;
+  questionEl.textContent = q.q;
+
+  answersEl.innerHTML = '';
+
+  const classes = ['a','b','c','d','e'];
+
+  q.options.forEach((option, index) => {
+    const btn = document.createElement('button');
+    btn.classList.add('answer', classes[index]);
+    btn.textContent = `${String.fromCharCode(65 + index)}) ${option}`;
+    btn.onclick = () => selectAnswer(index, btn);
+    answersEl.appendChild(btn);
+  });
+}
+
+function selectAnswer(index, btn) {
+  if(answered) return;
+  answered = true;
+
+  const q = questions[currentQuestion];
+  const buttons = document.querySelectorAll('.answer');
+
+  buttons.forEach((b, i) => {
+    if(i === q.answer) {
+      b.classList.add('correct');
+    }
+  });
+
+  if(index === q.answer) {
+    score++;
+    scoreEl.textContent = `Puntaje: ${score}`;
+  } else {
+    btn.classList.add('incorrect');
+  }
+
+  explanationEl.innerHTML = `<strong>Explicación:</strong> ${q.explanation}`;
+  explanationEl.style.display = 'block';
+
+  nextBtn.disabled = false;
+}
+
+function nextQuestion() {
+  currentQuestion++;
+
+  if(currentQuestion >= questions.length) {
+    showFinal();
+    return;
+  }
+
+  loadQuestion();
+}
+
+function showFinal() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('final-screen').style.display = 'block';
+
+  const percent = ((score / questions.length) * 100).toFixed(1);
+
+  document.getElementById('final-score').innerHTML = `Resultado: ${score}/${questions.length}<br>${percent}%`;
+}
+
+function restartQuiz() {
+  currentQuestion = 0;
+  score = 0;
+  scoreEl.textContent = 'Puntaje: 0';
+
+  document.getElementById('quiz-screen').style.display = 'block';
+  document.getElementById('final-screen').style.display = 'none';
+
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
