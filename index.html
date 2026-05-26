@@ -1,8 +1,10 @@
-<!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Banco Gineco-Obstetricia - Kahoot Style</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Banco Gineco-Obstetricia</title>
+
   <style>
     body {
       margin: 0;
@@ -13,730 +15,663 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-    }.container {
-  width: 90%;
-  max-width: 1000px;
-  background: rgba(0,0,0,0.25);
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
-}
+    }
 
-h1 {
-  text-align: center;
-  margin-bottom: 10px;
-}
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      background: rgba(0,0,0,0.25);
+      border-radius: 20px;
+      padding: 25px;
+    }
 
-.question-counter {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 18px;
-}
+    h1 { text-align: center; }
 
-.question {
-  font-size: 24px;
-  margin-bottom: 25px;
-  line-height: 1.5;
-}
+    .question-counter {
+      text-align: center;
+      margin-bottom: 15px;
+    }
 
-.answers {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-}
+    .question {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
 
-button.answer {
-  -webkit-appearance: none;
-  appearance: none;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  border: none;
-  border-radius: 15px;
-  padding: 18px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-  color: white;
-  font-weight: bold;
-}
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
 
-button.answer:hover {
-  transform: scale(1.03);
-  opacity: 0.9;
-}
+    button.answer {
+      border: none;
+      border-radius: 12px;
+      padding: 15px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+    }
 
-.a { background: #e53935; }
-.b { background: #1e88e5; }
-.c { background: #43a047; }
-.d { background: #fbc02d; color: black; }
-.e { background: #8e24aa; }
+    .a { background: #e53935; }
+    .b { background: #1e88e5; }
+    .c { background: #43a047; }
+    .d { background: #fbc02d; color: black; }
 
-.correct {
-  outline: 5px solid #00ff99;
-}
+    .correct { outline: 4px solid #00ff99; }
+    .incorrect { outline: 4px solid #ff1744; }
 
-.incorrect {
-  outline: 5px solid #ff1744;
-}
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
 
-.controls {
-  margin-top: 25px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+    .next-btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
 
-.score {
-  font-size: 20px;
-  font-weight: bold;
-}
+    .explanation {
+      margin-top: 15px;
+      display: none;
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      border-radius: 10px;
+    }
 
-.next-btn {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 10px;
-  background: white;
-  color: black;
-  font-size: 16px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.explanation {
-  margin-top: 20px;
-  padding: 15px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 10px;
-  display: none;
-}
-
-.final-screen {
-  text-align: center;
-  display: none;
-}
-
-@media(max-width: 768px) {
-  .answers {
-    grid-template-columns: 1fr;
-  }
-
-  .question {
-    font-size: 20px;
-  }
-}
-
+    .final-screen { display: none; text-align: center; }
   </style>
 </head>
+
 <body>
-  <div class="container">
-    <div id="quiz-screen">
-      <h1>Banco Gineco-Obstetricia</h1>
-      <div class="question-counter" id="counter"></div>
-      <div class="question" id="question"></div>
-      <div class="answers" id="answers"></div><div class="explanation" id="explanation"></div>
+<div class="container">
 
-  <div class="controls">
-    <div class="score" id="score">Puntaje: 0</div>
-    <button class="next-btn" id="nextBtn" onclick="nextQuestion()" disabled>Siguiente</button>
-  </div>
-</div>
+  <div id="quiz-screen">
+    <h1>Banco Gineco-Obstetricia</h1>
 
-<div class="final-screen" id="final-screen">
-  <h1>Examen Finalizado</h1>
-  <h2 id="final-score"></h2>
-  <button class="next-btn" onclick="restartQuiz()">Reiniciar</button>
-</div>
+    <div class="question-counter" id="counter"></div>
+    <div class="question" id="question"></div>
+    <div class="answers" id="answers"></div>
 
-  </div><script>
-window.addEventListener('error', function(e) {
-  console.error('Error detectado:', e.message);
-  document.body.innerHTML = `
-    <div style="padding:20px;font-family:Arial;background:#111;color:#fff;min-height:100vh;">
-      <h1>Error en el Quiz</h1>
-      <p><strong>Mensaje:</strong> ${e.message}</p>
-      <p><strong>Línea:</strong> ${e.lineno}</p>
-      <p>Revisa la consola del navegador para más detalles.</p>
+    <div class="explanation" id="explanation"></div>
+
+    <div class="controls">
+      <div id="score">Puntaje: 0</div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()" disabled>Siguiente</button>
     </div>
-  `;
-});
+  </div>
 
-document.addEventListener('DOMContentLoaded', () => {
+  <div class="final-screen" id="final-screen">
+    <h1>Examen Finalizado</h1>
+    <h2 id="final-score"></h2>
+    <button class="next-btn" onclick="restartQuiz()">Reiniciar</button>
+  </div>
+
+</div>
+
+<script>
 const questions = [
-{
-q: '1. Paciente femenino de 28 años, embarazo de 12 semanas, Western Blot positiva para VIH. La TAR en embarazo reduce transmisión vertical a:',
-options: ['20%', '10%', '<1%', '5%'],
-answer: 2,
-explanation: 'La terapia antirretroviral adecuada reduce la transmisión vertical a menos del 1%.'
-},
-{
-q: '2. Adolescente con dismenorrea intensa que mejora con AINES. Alteración primaria:',
-options: ['Endometriosis', 'Aumento de prostaglandinas', 'Miomatosis', 'Adenomiosis'],
-answer: 1,
-explanation: 'La dismenorrea primaria se asocia al aumento de prostaglandinas endometriales.'
-},
-{
-q: '3. Tratamiento inicial de dismenorrea primaria:',
-options: ['Antibióticos', 'AINES', 'Corticoides', 'Drospirenona'],
-answer: 1,
-explanation: 'Los AINES inhiben prostaglandinas y son primera línea.'
-},
-{
-q: '4. Embarazo 32 semanas, peso fetal <p5 y Doppler alterado. Diagnóstico:',
-options: ['Macrosomía fetal', 'RCIU', 'Oligohidramnios', 'Feto pequeño para EG'],
-answer: 1,
-explanation: 'Peso fetal bajo con Doppler alterado corresponde a RCIU.'
-},
-{
-q: '5. Semana recomendada para tamizaje de diabetes gestacional:',
-options: ['10-12', '16-20', '24-28', '32-34'],
-answer: 2,
-explanation: 'El tamizaje se realiza entre las semanas 24-28.'
-},
-{
-q: '6. Criterios ADA CTGO 75 g:',
-options: ['Ayuno >95,1h>180,2h>155,3h>140', 'Ayuno >90,1h>180,2h>153', 'Ayuno >93,1h>200,2h>155,3h>140', 'Ayuno >92,1h>180,2h>153'],
-answer: 3,
-explanation: 'ADA/IADPSG: ayuno ≥92, 1h ≥180, 2h ≥153.'
-},
-{
-q: '7. Hidrocefalia + calcificaciones intracraneales + coriorretinitis:',
-options: ['Rubéola', 'CMV', 'Toxoplasmosis', 'Sífilis'],
-answer: 2,
-explanation: 'Triada clásica de toxoplasmosis congénita.'
-},
-{
-q: '8. Estudio para confirmar ruptura de membranas:',
-options: ['Prueba de nitrazina', 'Ultrasonido', 'BH', 'PCR'],
-answer: 0,
-explanation: 'La prueba de nitrazina ayuda a confirmar ruptura de membranas.'
-},
-{
-q: '9. Embarazo 38 semanas con ruptura de membranas sin TP:',
-options: ['Alta', 'Antibióticos y reposo', 'Inducción del trabajo de parto', 'Cesárea inmediata'],
-answer: 2,
-explanation: 'A término se recomienda inducir el trabajo de parto.'
-},
-{
-q: '10. G1P0 30 semanas con salida de líquido claro vaginal:',
-options: ['RPM pretérmino', 'Incontinencia urinaria', 'Leucorrea fisiológica', 'Cervicovaginitis'],
-answer: 0,
-explanation: 'Salida de líquido antes de término sugiere RPM pretérmino.'
-},
-{
-q: '11. Manejo inicial más adecuado:',
-options: ['Inducir parto', 'Manejo expectante con hospitalización', 'Cesárea urgente', 'Alta con reposo'],
-answer: 1,
-explanation: 'En RPM pretérmino sin datos de infección se hospitaliza y vigila.'
-},
-{
-q: '12. Medicamento para maduración pulmonar fetal:',
-options: ['Betametasona', 'Metronidazol', 'Surfactante', 'Nifedipino'],
-answer: 0,
-explanation: 'Los corticoides antenatales aceleran maduración pulmonar.'
-},
-{
-q: '13. Definición de RCIU:',
-options: ['Peso <p5', 'Peso <p10', 'Peso <p15', 'Peso <p3'],
-answer: 1,
-explanation: 'RCIU: peso fetal estimado menor al percentil 10.'
-},
-{
-q: '14. Causa más frecuente de RCIU asimétrico:',
-options: ['TORCH', 'Insuficiencia placentaria', 'Alteraciones cromosómicas', 'Malformaciones'],
-answer: 1,
-explanation: 'La insuficiencia placentaria es la causa más frecuente.'
-},
-{
-q: '15. Complicación fetal más frecuente en DM gestacional:',
-options: ['Macrosomía', 'Bajo peso', 'CIV e hipertrofia cardiaca', 'Óbito'],
-answer: 0,
-explanation: 'La macrosomía es la complicación fetal más frecuente.'
-},
-{
-q: '16. Primera línea cuando falla dieta en DMG:',
-options: ['Metformina', 'Insulina', 'Glibenclamida', 'Sitagliptina'],
-answer: 1,
-explanation: 'La insulina es el tratamiento estándar.'
-},
-{
-q: '17. Embarazada Rh negativa a las 30 semanas:',
-options: ['Vacuna anti-D', 'Inmunoglobulina anti-D', 'Corticoide', 'Ácido fólico'],
-answer: 1,
-explanation: 'La profilaxis con inmunoglobulina anti-D se aplica alrededor de las 28 semanas.'
-},
-{
-q: '18. Principal complicación fetal de isoinmunización:',
-options: ['Hidrops fetal', 'Anencefalia', 'Polidactilia', 'Espina bífida'],
-answer: 0,
-explanation: 'La anemia fetal severa produce hidrops fetal.'
-},
-{
-q: '19. Mejor estudio para evaluar anemia fetal:',
-options: ['Amniocentesis', 'Cordocentesis', 'Doppler ACM', 'Kleihauer-Betke'],
-answer: 2,
-explanation: 'El Doppler de arteria cerebral media es no invasivo y útil.'
-},
-{
-q: '20. Tratamiento de cistitis no complicada en embarazo:',
-options: ['Ciprofloxacino', 'Nitrofurantoína', 'Tetraciclina', 'Cloranfenicol'],
-answer: 1,
-explanation: 'Nitrofurantoína es opción frecuente y segura.'
-},
-{
-q: '21. Triada clásica de toxoplasmosis congénita:',
-options: ['Microcefalia+cataratas+cardiopatía', 'Hidrocefalia+calcificaciones+coriorretinitis', 'Hepatoesplenomegalia+ictericia+anemia', 'Sordera+cataratas+cardiopatía'],
-answer: 1,
-explanation: 'Triada clásica de toxoplasmosis.'
-},
-{
-q: '22. Infección congénita asociada a cataratas y cardiopatía:',
-options: ['Rubéola', 'Toxoplasma', 'CMV', 'Herpes'],
-answer: 0,
-explanation: 'La rubéola congénita produce cataratas y cardiopatía.'
-},
-{
-q: '23. Principal vía de transmisión del VIH al RN:',
-options: ['Transplacentaria', 'Lactancia', 'Sangre', 'Vertical'],
-answer: 3,
-explanation: 'La transmisión vertical incluye embarazo, parto y lactancia.'
-},
-{
-q: '24. Agente más frecuente en IVU durante embarazo:',
-options: ['Klebsiella', 'E. coli', 'Proteus', 'Enterococcus'],
-answer: 1,
-explanation: 'E. coli es el principal agente etiológico.'
-},
-{
-q: '25. Flujo blanco grumoso con prurito intenso:',
-options: ['Tricomoniasis', 'Vaginosis bacteriana', 'Candidiasis', 'Gonorrea'],
-answer: 2,
-explanation: 'La candidiasis produce flujo grumoso y prurito.'
-},
-{
-q: '26. Agente etiológico más frecuente:',
-options: ['HPV', 'Gonorrea y clamidia', 'Cándida', 'Herpes'],
-answer: 2,
-explanation: 'Candidiasis vaginal por Candida spp.'
-},
-{
-q: '27. Tratamiento recomendado:',
-options: ['Ceftriaxona+doxi+metro', 'Penicilina+azitro', 'Fluconazol+doxi+clinda', 'Ampicilina+clinda'],
-answer: 2,
-explanation: 'Fluconazol es tratamiento frecuente de candidiasis.'
-},
-{
-q: '28. Flujo grisáceo con olor a pescado. Agente causal:',
-options: ['Cándida', 'Gardnerella vaginalis', 'Trichomonas', 'Chlamydia'],
-answer: 1,
-explanation: 'La vaginosis bacteriana se asocia a Gardnerella.'
-},
-{
-q: '29. Dolor pélvico, fiebre y flujo purulento:',
-options: ['Vaginitis', 'EPI', 'Endometriosis', 'Apendicitis'],
-answer: 1,
-explanation: 'Cuadro típico de enfermedad pélvica inflamatoria.'
-},
-{
-q: '30. VIH en embarazo sin TAR previa. ¿Cuándo iniciar?',
-options: ['CD4<200', 'Tercer trimestre', 'Inmediatamente', 'Posparto'],
-answer: 2,
-explanation: 'La TAR debe iniciarse inmediatamente.'
-},
-{
-q: '31. Profilaxis neonatal estándar en RN de madre VIH+:',
-options: ['Tenofovir', 'Zidovudina', 'Lamivudina', 'Ritonavir'],
-answer: 1,
-explanation: 'Zidovudina neonatal es profilaxis estándar.'
-},
-{
-q: '32. Medida más efectiva para disminuir transmisión vertical:',
-options: ['Cesárea', 'Suspender lactancia', 'TAR materna', 'Zidovudina neonatal'],
-answer: 2,
-explanation: 'La TAR materna es la medida más efectiva.'
-},
-{
-q: '33. Amenorrea primaria, vagina corta y sin útero:',
-options: ['Turner', 'Insensibilidad a andrógenos', 'MRKH', 'Hipogonadismo hipogonadotrópico'],
-answer: 2,
-explanation: 'MRKH: ausencia uterina con caracteres sexuales normales.'
-},
-{
-q: '34. Amenorrea secundaria tras legrado uterino:',
-options: ['SOP', 'Síndrome de Asherman', 'Hiperprolactinemia', 'Insuficiencia ovárica'],
-answer: 1,
-explanation: 'Las sinequias uterinas producen síndrome de Asherman.'
-},
-{
-q: '35. Test de progesterona negativo y luego E+P positivo:',
-options: ['Falla ovárica', 'Anovulación', 'Tracto normal con hipoestrogenismo', 'Obstrucción uterina'],
-answer: 2,
-explanation: 'Sugiere hipoestrogenismo con tracto de salida intacto.'
-},
-{
-q: '36. Toxoplasmosis aguda en embarazo temprano. Manejo:',
-options: ['Pirimetamina+sulfadiazina', 'Espiramicina', 'Interrumpir embarazo', 'Ganciclovir'],
-answer: 1,
-explanation: 'Espiramicina disminuye transmisión fetal.'
-},
-{
-q: '37. Rubéola en embarazo temprano. Riesgo fetal principal:',
-options: ['Cardiopatía congénita', 'Hidrocefalia', 'Calcificaciones', 'Coriorretinitis'],
-answer: 0,
-explanation: 'La rubéola congénita se asocia a cardiopatía.'
-},
-{
-q: '38. Dismenorrea intensa, dispareunia e infertilidad:',
-options: ['Adenomiosis', 'Endometriosis', 'Miomatosis', 'Vaginitis'],
-answer: 1,
-explanation: 'Triada clásica de endometriosis.'
-},
-{
-q: '39. Método diagnóstico definitivo de endometriosis:',
-options: ['USG', 'RM', 'Laparoscopia', 'BH'],
-answer: 2,
-explanation: 'La laparoscopia es el estándar diagnóstico.'
-},
-{
-q: '40. Tratamiento inicial de endometriosis:',
-options: ['Antibióticos', 'AINES y hormonales', 'Penicilina', 'Anticoagulantes'],
-answer: 1,
-explanation: 'Manejo inicial médico con AINES y hormonales.'
-},
-{
-q: '41. Exantema en palmas y plantas + condilomas planos:',
-options: ['Primaria', 'Secundaria', 'Latente temprana', 'Latente tardía', 'Terciaria'],
-answer: 1,
-explanation: 'Manifestaciones típicas de sífilis secundaria.'
-},
-{
-q: '42. Causa más frecuente de amenorrea secundaria:',
-options: ['Hipotiroidismo', 'Embarazo', 'Prolactinoma', 'SOP'],
-answer: 1,
-explanation: 'Siempre descartar embarazo primero.'
-},
-{
-q: '43. Herpes genital primario activo a término:',
-options: ['Parto vaginal', 'Cesárea', 'Inducción', 'Valaciclovir intraparto'],
-answer: 1,
-explanation: 'Cesárea para disminuir transmisión neonatal.'
-},
-{
-q: '44. VIH con carga viral 1500 copias/mL al parto:',
-options: ['Parto vaginal', 'Cesárea electiva 38 sem', 'Inducción 39 sem', 'Zidovudina oral'],
-answer: 1,
-explanation: 'Carga viral >1000 indica cesárea electiva.'
-},
-{
-q: '45. Edad promedio de menopausia:',
-options: ['45', '48', '51', '55'],
-answer: 2,
-explanation: 'La edad promedio es 51 años.'
-},
-{
-q: '46. Sistema de clasificación de SUA:',
-options: ['FIGO', 'PALM-COEIN', 'TNM', 'BIRADS'],
-answer: 1,
-explanation: 'PALM-COEIN clasifica sangrado uterino anormal.'
-},
-{
-q: '47. Masa mamaria móvil BIRADS 3:',
-options: ['Carcinoma ductal', 'Fibroadenoma', 'Tumor phyllodes', 'Liposarcoma'],
-answer: 1,
-explanation: 'Fibroadenoma: masa móvil y bien delimitada.'
-},
-{
-q: '48. Marcador asociado a cáncer de ovario:',
-options: ['CA19-9', 'CA-125', 'AFP', 'CEA'],
-answer: 1,
-explanation: 'CA-125 se asocia a cáncer epitelial de ovario.'
-},
-{
-q: '49. Virus asociado a cáncer cervicouterino:',
-options: ['HSV', 'VPH', 'VIH', 'CMV'],
-answer: 1,
-explanation: 'El VPH es el principal agente asociado.'
-},
-{
-q: '50. Tipos de VPH asociados a cáncer:',
-options: ['6 y 11', '16 y 18', '31 y 33', '40 y 42'],
-answer: 1,
-explanation: 'Los tipos 16 y 18 son de alto riesgo.'
-},
-{
-q: '51. Triada clásica de endometriosis:',
-options: ['Amenorrea+galactorrea+infertilidad', 'Dismenorrea+dispareunia+infertilidad', 'Dolor+fiebre+secreción', 'Menorragia+anemia+fatiga'],
-answer: 1,
-explanation: 'Triada clásica de endometriosis.'
-},
-{
-q: '52. Método anticonceptivo reversible más efectivo:',
-options: ['Condón', 'DIU cobre', 'Ritmo', 'Espermicida', 'DIU Mirena'],
-answer: 4,
-explanation: 'El DIU hormonal tiene muy alta efectividad.'
-},
-{
-q: '53. Vesículas dolorosas que ulceran:',
-options: ['Chancro sifilítico', 'Chancroide', 'Herpes genital', 'LGV', 'Donovanosis'],
-answer: 2,
-explanation: 'Herpes genital produce vesículas y úlceras dolorosas.'
-},
-{
-q: '54. Tratamiento de sífilis:',
-options: ['Azitromicina', 'Penicilina G benzatínica 2.4 M UI IM dosis única', 'Penicilina G 1.2 M UI', 'Ceftriaxona'],
-answer: 1,
-explanation: 'Tratamiento estándar de sífilis temprana.'
-},
-{
-q: '55. Tratamiento de gonorrea:',
-options: ['Ceftriaxona', 'Amoxicilina', 'Penicilina', 'Metronidazol'],
-answer: 0,
-explanation: 'Ceftriaxona es tratamiento de elección.'
-},
-{
-q: '56. Pérdida de orina al toser:',
-options: ['Urgencia', 'Esfuerzo', 'Rebose', 'Neurogénica'],
-answer: 1,
-explanation: 'La incontinencia de esfuerzo ocurre con aumento de presión abdominal.'
-},
-{
-q: '57. Incontinencia por hiperactividad del detrusor:',
-options: ['Esfuerzo', 'Urgencia', 'Mixta', 'Rebose'],
-answer: 1,
-explanation: 'La urgencia se relaciona con hiperactividad del detrusor.'
-},
-{
-q: '58. Sangrado posmenopáusico. Diagnóstico a descartar:',
-options: ['Cáncer endometrial', 'Mioma', 'Adenomiosis', 'Vaginitis'],
-answer: 0,
-explanation: 'Todo sangrado posmenopáusico obliga a descartar cáncer endometrial.'
-},
-{
-q: '59. Tumor ovárico con pelo y dientes:',
-options: ['Cistadenoma', 'Teratoma', 'Fibroma', 'Adenoma'],
-answer: 1,
-explanation: 'Teratoma quístico maduro.'
-},
-{
-q: '60. Galactorrea con prolactina elevada. Siguiente acción:',
-options: ['TAC', 'Cabergolina', 'Bromocriptina', 'RMN'],
-answer: 3,
-explanation: 'Debe solicitarse RMN hipofisaria ante hiperprolactinemia importante.'
-},
-{
-q: '61. Causa más frecuente de galactorrea:',
-options: ['Hipertiroidismo', 'Hiperprolactinemia', 'Diabetes', 'SOP'],
-answer: 1,
-explanation: 'La hiperprolactinemia es la principal causa.'
-},
-{
-q: '62. Infección vaginal más frecuente:',
-options: ['Tricomoniasis', 'Vaginosis bacteriana', 'Moniliasis', 'Clamydia'],
-answer: 1,
-explanation: 'La vaginosis bacteriana es la más frecuente.'
-},
-{
-q: '63. Hallazgo microscópico confirmatorio:',
-options: ['Hifas', 'Leucocitos', 'Células clave', 'Espiroquetas y tricomonas'],
-answer: 2,
-explanation: 'Las células clave son diagnósticas de vaginosis bacteriana.'
-},
-{
-q: '64. Embarazo con macrosomía y polihidramnios. Causa principal:',
-options: ['Preeclampsia', 'IVU', 'Diabetes gestacional', 'Cesárea previa'],
-answer: 2,
-explanation: 'Macrosomía y polihidramnios sugieren DM gestacional.'
-},
-{
-q: '65. Estudio recomendado por antecedente familiar de cáncer de mama:',
-options: ['Mastografía', 'TAC', 'HER2', 'Estrógeno/progesterona'],
-answer: 0,
-explanation: 'La mastografía es el estudio de tamizaje.'
-},
-{
-q: '66. Lesión indurada, única y no dolorosa:',
-options: ['Primaria', 'Secundaria', 'Latente temprana', 'Latente tardía', 'Terciaria'],
-answer: 0,
-explanation: 'El chancro sifilítico corresponde a sífilis primaria.'
-},
-{
-q: '67. Prueba inicial ante sospecha de sífilis:',
-options: ['Cultivo', 'VDRL', 'Western Blot', 'ELISA'],
-answer: 1,
-explanation: 'VDRL es prueba no treponémica inicial.'
-},
-{
-q: '68. Prueba confirmatoria de sífilis:',
-options: ['VDRL', 'Western Blot', 'FTA-ABS', 'Captura híbridos'],
-answer: 2,
-explanation: 'FTA-ABS es prueba treponémica confirmatoria.'
-},
-{
-q: '69. Vacuna bivalente VPH protege contra:',
-options: ['11 y 16', '16,18,31,33', '11 y 18', '16 y 18'],
-answer: 3,
-explanation: 'La vacuna bivalente cubre VPH 16 y 18.'
-},
-{
-q: '70. Método diagnóstico definitivo de endometriosis:',
-options: ['USG transvaginal', 'RM', 'Laparoscopia', 'Histerosalpingografía'],
-answer: 2,
-explanation: 'La laparoscopia es diagnóstico definitivo.'
-},
-{
-q: '71. Sangrado posmenopáusico con obesidad. Estudio inicial:',
-options: ['Papanicolaou', 'Biopsia endometrial', 'USG transvaginal', 'Histeroscopia'],
-answer: 2,
-explanation: 'USG transvaginal es estudio inicial.'
-},
-{
-q: '72. Mecanismo fisiopatológico de vaginosis bacteriana:',
-options: ['Protozoario flagelado', 'Sobrecrecimiento anaerobios', 'Infección viral', 'Diplococo gram negativo'],
-answer: 1,
-explanation: 'Hay disminución de lactobacilos y proliferación anaerobia.'
-},
-{
-q: '73. Amenorrea secundaria y galactorrea. Estudio inicial:',
-options: ['RM hipófisis', 'Prolactina sérica', 'USG pélvico', 'Perfil tiroideo'],
-answer: 1,
-explanation: 'Primero se solicita prolactina sérica.'
-},
-{
-q: '74. Pérdida de orina al toser o reír:',
-options: ['Urgencia', 'Rebosamiento', 'Esfuerzo', 'Funcional'],
-answer: 2,
-explanation: 'Corresponde a incontinencia urinaria de esfuerzo.'
-},
-{
-q: '75. Tipos virales asociados a condilomas acuminados:',
-options: ['16 y 10', '18 y 16', '6 y 11', '31'],
-answer: 2,
-explanation: 'VPH 6 y 11 causan condilomas.'
-},
-{
-q: '76. Mecanismo fisiopatológico más aceptado de endometriosis:',
-options: ['Metaplasia celómica', 'Menstruación retrógrada', 'Diseminación hematógena', 'Alteración cromosómica'],
-answer: 1,
-explanation: 'La teoría de Sampson es menstruación retrógrada.'
-},
-{
-q: '77. Posmenopáusica con endometrio 12 mm:',
-options: ['Biopsia endometrial', 'Histerectomía', 'Tomografía', 'Marcadores tumorales'],
-answer: 0,
-explanation: 'Engrosamiento endometrial requiere biopsia.'
-},
-{
-q: '78. Microorganismo asociado a secuelas tubarias:',
-options: ['Candida', 'Gardnerella', 'Chlamydia trachomatis', 'VPH'],
-answer: 2,
-explanation: 'Chlamydia produce daño tubario e infertilidad.'
-},
-{
-q: '79. Tipo histológico más frecuente de cáncer de ovario:',
-options: ['Germinal', 'Estromal', 'Epitelial', 'Metastásico'],
-answer: 2,
-explanation: 'El cáncer epitelial es el más frecuente.'
-},
-{
-q: '80. Flujo espumoso verdoso y cérvix en fresa:',
-options: ['Protozoario flagelado', 'Bacteria gram positiva', 'Virus ADN', 'Hongo'],
-answer: 0,
-explanation: 'Trichomonas vaginalis es un protozoario flagelado.'
-}
+  {
+    q: "Paciente VIH embarazo 12 semanas. TAR reduce transmisión vertical a:",
+    options: ["20%", "10%", "<1%", "5%"],
+    answer: 2,
+    explanation: "La terapia antirretroviral reduce la transmisión vertical a <1%."
+  },
+  {
+    q: "Dismenorrea primaria mecanismo principal:",
+    options: ["Endometriosis", "Aumento de prostaglandinas", "Miomatosis", "Adenomiosis"],
+    answer: 1,
+    explanation: "Se debe al aumento de prostaglandinas uterinas."
+  },
+  {
+    q: "Tratamiento inicial de dismenorrea primaria:",
+    options: ["Antibióticos", "AINES", "Corticoides", "Drospirenona"],
+    answer: 1,
+    explanation: "AINES son primera línea."
+  },
+  {
+    q: "Embarazo 32 semanas con PFE <p5 y Doppler alterado. Diagnóstico:",
+    options: ["Macrosomía", "RCIU", "Oligohidramnios", "PEG"],
+    answer: 1,
+    explanation: "Peso < percentil 10 con alteraciones Doppler = RCIU."
+  },
+  {
+    q: "Tamizaje diabetes gestacional se realiza en:",
+    options: ["10-12", "16-20", "24-28", "32-34"],
+    answer: 2,
+    explanation: "Se realiza entre 24–28 semanas."
+  },
+  {
+    q: "Criterios ADA 75g DMG:",
+    options: [
+      "Ayuno >92, 1h >180, 2h >153",
+      "Ayuno >90, 1h >180, 2h >155",
+      "Ayuno >95, 1h >180, 2h >155, 3h >140",
+      "Ayuno >93, 1h >200, 2h >155"
+    ],
+    answer: 0,
+    explanation: "Criterios IADPSG/ADA con CTGO 75g."
+  },
+  {
+    q: "RN con hidrocefalia, calcificaciones y coriorretinitis:",
+    options: ["Rubéola", "CMV", "Toxoplasma", "Sífilis"],
+    answer: 2,
+    explanation: "Triada clásica de toxoplasmosis congénita."
+  },
+  {
+    q: "Estudio confirmatorio de ruptura de membranas:",
+    options: ["Nitrazina", "USG", "BH", "PCR"],
+    answer: 0,
+    explanation: "Prueba de nitrazina es confirmatoria clínica."
+  },
+  {
+    q: "Conducta en RPM a término sin trabajo de parto:",
+    options: ["Alta", "Antibióticos", "Inducción", "Cesárea"],
+    answer: 2,
+    explanation: "Se indica inducción del trabajo de parto."
+  },
+  {
+    q: "Diagnóstico 30 semanas con salida de líquido claro:",
+    options: ["RPM pretérmino", "Incontinencia urinaria", "Leucorrea", "Cervicovaginitis"],
+    answer: 0,
+    explanation: "RPM pretérmino."
+  },
+  {
+    q: "Manejo inicial RPM pretérmino estable:",
+    options: ["Inducir parto", "Expectante hospitalario", "Cesárea", "Alta"],
+    answer: 1,
+    explanation: "Manejo expectante si no hay infección."
+  },
+  {
+    q: "Maduración pulmonar fetal:",
+    options: ["Betametasona", "Metronidazol", "Surfactante", "Nifedipino"],
+    answer: 0,
+    explanation: "Corticoides antenatales."
+  },
+  {
+    q: "Definición de RCIU:",
+    options: ["<p5", "<p10", "<p15", "<p3"],
+    answer: 1,
+    explanation: "Peso fetal < percentil 10."
+  },
+  {
+    q: "Causa más frecuente RCIU asimétrico:",
+    options: ["TORCH", "Insuficiencia placentaria", "Genético", "Malformaciones"],
+    answer: 1,
+    explanation: "Insuficiencia uteroplacentaria."
+  },
+  {
+    q: "Complicación fetal más frecuente DMG:",
+    options: ["Macrosomía", "Bajo peso", "CIV", "Óbito"],
+    answer: 0,
+    explanation: "Hiperglucemia materna → macrosomía."
+  },
+  {
+    q: "Tratamiento DMG tras falla dieta:",
+    options: ["Metformina", "Insulina 0.2 U/kg", "Glibenclamida", "Sitagliptina"],
+    answer: 1,
+    explanation: "Insulina es estándar."
+  },
+  {
+    q: "Manejo Rh negativo a las 30 semanas:",
+    options: ["Vacuna anti-D", "Inmunoglobulina anti-D", "Corticoide", "Ácido fólico"],
+    answer: 1,
+    explanation: "Profilaxis con inmunoglobulina anti-D."
+  },
+  {
+    q: "Complicación fetal isoinmunización:",
+    options: ["Hidrops fetal", "Anencefalia", "Polidactilia", "Espina bífida"],
+    answer: 0,
+    explanation: "Anemia fetal severa → hidrops."
+  },
+  {
+    q: "Mejor estudio anemia fetal:",
+    options: ["Liley", "Cordocentesis", "Doppler ACM", "Kleihauer"],
+    answer: 2,
+    explanation: "Doppler arteria cerebral media."
+  },
+  {
+    q: "Cistitis en embarazo tratamiento:",
+    options: ["Ciprofloxacino", "Nitrofurantoína", "Tetraciclina", "Cloranfenicol"],
+    answer: 1,
+    explanation: "Nitrofurantoína segura en embarazo."
+  },
+  {
+    q: "Triada toxoplasmosis congénita:",
+    options: ["Microcefalia", "Hidrocefalia + calcificaciones + coriorretinitis", "Hepatoesplenomegalia", "Sordera"],
+    answer: 1,
+    explanation: "Triada clásica."
+  },
+  {
+    q: "Cataratas + cardiopatía congénita:",
+    options: ["Rubéola", "Toxoplasma", "CMV", "Herpes"],
+    answer: 0,
+    explanation: "Rubéola congénita."
+  },
+  {
+    q: "Transmisión principal VIH RN:",
+    options: ["Transplacentaria", "Lactancia", "Sangre", "Vertical"],
+    answer: 2,
+    explanation: "Principalmente intraparto (exposición sanguínea)."
+  },
+  {
+    q: "ITU embarazo agente más frecuente:",
+    options: ["Klebsiella", "E. coli", "Proteus", "Enterococcus"],
+    answer: 1,
+    explanation: "E. coli es el principal."
+  },
+  {
+    q: "Flujo blanco grumoso prurito:",
+    options: ["Tricomoniasis", "Vaginosis", "Candidiasis", "Gonorrea"],
+    answer: 2,
+    explanation: "Candidiasis vaginal."
+  },
+  {
+    q: "Agente más frecuente vaginitis:",
+    options: ["HPV", "Gonorrea", "Cándida", "Herpes"],
+    answer: 2,
+    explanation: "Cándida albicans."
+  },
+  {
+    q: "Tratamiento candidiasis:",
+    options: ["Ceftriaxona", "Penicilina", "Fluconazol", "Ampicilina"],
+    answer: 2,
+    explanation: "Fluconazol."
+  },
+  {
+    q: "Flujo grisáceo olor a pescado:",
+    options: ["Cándida", "Gardnerella", "Trichomonas", "Chlamydia"],
+    answer: 1,
+    explanation: "Vaginosis bacteriana."
+  },
+  {
+    q: "Diagnóstico dolor pélvico + fiebre:",
+    options: ["Vaginitis", "EIP", "Endometriosis", "Apendicitis"],
+    answer: 1,
+    explanation: "Enfermedad pélvica inflamatoria."
+  },
+  {
+    q: "Inicio TAR VIH embarazo:",
+    options: ["CD4<200", "Tercer trimestre", "Inmediato", "Postparto"],
+    answer: 2,
+    explanation: "Siempre iniciar de inmediato."
+  },
+  {
+    q: "Profilaxis neonatal VIH:",
+    options: ["Tenofovir", "Zidovudina", "Lamivudina", "Ritonavir"],
+    answer: 1,
+    explanation: "Zidovudina neonatal."
+  },
+  {
+    q: "Medida más efectiva VIH vertical:",
+    options: ["Cesárea", "No lactancia", "TAR materna", "ZDV neonatal"],
+    answer: 2,
+    explanation: "TAR materna."
+  },
+  {
+    q: "MRKH:",
+    options: ["Turner", "AIS", "MRKH", "Hipogonadismo"],
+    answer: 2,
+    explanation: "Agenesia mülleriana."
+  },
+  {
+    q: "Asherman:",
+    options: ["SOP", "Adherencias uterinas", "Hiperprolactinemia", "IOP"],
+    answer: 1,
+    explanation: "Síndrome de Asherman."
+  },
+  {
+    q: "Test progesterona negativo + estrógeno positivo:",
+    options: ["Falla ovárica", "Anovulación", "Hipoestrogenismo", "Obstrucción"],
+    answer: 2,
+    explanation: "Hipoestrogenismo con vía de salida permeable."
+  },
+  {
+    q: "Toxoplasma IgM positivo tratamiento:",
+    options: ["Pirimetamina", "Espiramicina", "Interrupción", "Ganciclovir"],
+    answer: 1,
+    explanation: "Espiramicina en embarazo temprano."
+  },
+  {
+    q: "Rubéola riesgo fetal:",
+    options: ["Cardiopatía", "Hidrocefalia", "Calcificaciones", "Coriorretinitis"],
+    answer: 0,
+    explanation: "Cardiopatía congénita."
+  },
+  {
+    q: "Endometriosis diagnóstico:",
+    options: ["USG", "RM", "Laparoscopia", "BH"],
+    answer: 2,
+    explanation: "Diagnóstico definitivo: laparoscopia."
+  },
+  {
+    q: "Endometriosis tratamiento inicial:",
+    options: ["Antibióticos", "AINES + hormonales", "Penicilina", "Anticoagulantes"],
+    answer: 1,
+    explanation: "Manejo sintomático hormonal."
+  },
+  {
+    q: "Sífilis secundaria:",
+    options: ["Primaria", "Secundaria", "Latente", "Terciaria"],
+    answer: 1,
+    explanation: "Exantema palmoplantar."
+  },
+  {
+    q: "Causa más común amenorrea secundaria:",
+    options: ["Hipotiroidismo", "Embarazo", "Prolactinoma", "SOP"],
+    answer: 1,
+    explanation: "Embarazo siempre descartar primero."
+  },
+  {
+    q: "HSV primoinfección a término:",
+    options: ["Vaginal", "Cesárea", "Inducción", "Valaciclovir"],
+    answer: 1,
+    explanation: "Cesárea obligada."
+  },
+  {
+    q: "VIH con carga viral 1500 al parto:",
+    options: ["Vaginal", "Cesárea", "Inducción", "ZDV oral"],
+    answer: 1,
+    explanation: "Cesárea electiva."
+  },
+  {
+    q: "Edad menopausia:",
+    options: ["45", "48", "51", "55"],
+    answer: 2,
+    explanation: "Promedio 51 años."
+  },
+  {
+    q: "Clasificación sangrado uterino:",
+    options: ["FIGO", "PALM-COEIN", "TNM", "BIRADS"],
+    answer: 1,
+    explanation: "PALM-COEIN."
+  },
+  {
+    q: "BIRADS 3 masa mamaria:",
+    options: ["Cáncer", "Fibroadenoma", "Phyllodes", "Liposarcoma"],
+    answer: 1,
+    explanation: "Probablemente benigno."
+  },
+  {
+    q: "CA asociado ovario:",
+    options: ["CA19-9", "CA125", "AFP", "CEA"],
+    answer: 1,
+    explanation: "CA-125."
+  },
+  {
+    q: "VPH oncogénico:",
+    options: ["HSV", "VPH", "VIH", "CMV"],
+    answer: 1,
+    explanation: "Virus del papiloma humano."
+  },
+  {
+    q: "VPH alto riesgo:",
+    options: ["6/11", "16/18", "31/33", "40/42"],
+    answer: 1,
+    explanation: "16 y 18."
+  },
+  {
+    q: "Triada endometriosis:",
+    options: ["Amenorrea", "Dismenorrea + dispareunia + infertilidad", "Fiebre", "Menorragia"],
+    answer: 1,
+    explanation: "Triada clásica."
+  },
+  {
+    q: "Anticonceptivo más efectivo reversible:",
+    options: ["Condón", "DIU cobre", "Ritmo", "Espermicida", "DIU Mirena"],
+    answer: 4,
+    explanation: "LARC: DIU hormonal."
+  },
+  {
+    q: "Herpes genital:",
+    options: ["Sífilis", "Chancroide", "Herpes", "LGV", "Donovanosis"],
+    answer: 2,
+    explanation: "HSV."
+  },
+  {
+    q: "Tratamiento sífilis:",
+    options: ["Azitromicina", "Penicilina G benzatínica 2.4M", "Penicilina 1.2M", "Ceftriaxona"],
+    answer: 1,
+    explanation: "Dosis única 2.4M UI."
+  },
+  {
+    q: "Tratamiento gonorrea:",
+    options: ["Ceftriaxona", "Amoxicilina", "Penicilina", "Metronidazol"],
+    answer: 0,
+    explanation: "Ceftriaxona."
+  },
+  {
+    q: "Incontinencia al toser:",
+    options: ["Urgencia", "Esfuerzo", "Rebose", "Neurogénica"],
+    answer: 1,
+    explanation: "Incontinencia de esfuerzo."
+  },
+  {
+    q: "Detrusor hiperactivo:",
+    options: ["Esfuerzo", "Urgencia", "Mixta", "Rebose"],
+    answer: 1,
+    explanation: "Hiperactividad detrusor."
+  },
+  {
+    q: "Sangrado postmenopausia:",
+    options: ["Cáncer endometrial", "Mioma", "Adenomiosis", "Vaginitis"],
+    answer: 0,
+    explanation: "Descartar cáncer endometrial."
+  },
+  {
+    q: "Teratoma:",
+    options: ["Cistadenoma", "Teratoma", "Fibroma", "Adenoma"],
+    answer: 1,
+    explanation: "Tumor germinal con tejidos diversos."
+  },
+  {
+    q: "Prolactina elevada:",
+    options: ["TAC", "Cabergolina", "Bromocriptina", "RMN"],
+    answer: 3,
+    explanation: "RMN hipófisis."
+  },
+  {
+    q: "Galactorrea causa más frecuente:",
+    options: ["Hipertiroidismo", "Hiperprolactinemia", "Diabetes", "SOP"],
+    answer: 1,
+    explanation: "Hiperprolactinemia."
+  },
+  {
+    q: "Infección vaginal más frecuente:",
+    options: ["Tricomoniasis", "Vaginosis", "Candidiasis", "Clamidia"],
+    answer: 1,
+    explanation: "Vaginosis bacteriana."
+  },
+  {
+    q: "Clue cells:",
+    options: ["Candida", "Leucocitos", "Clue cells", "Trichomonas"],
+    answer: 2,
+    explanation: "Hallazgo típico de BV."
+  },
+  {
+    q: "Causa macrosomía en este caso:",
+    options: ["Preeclampsia", "IVU", "Diabetes gestacional", "Cesárea previa"],
+    answer: 2,
+    explanation: "DMG → macrosomía/polihidramnios."
+  },
+  {
+    q: "Estudio cáncer mama riesgo:",
+    options: ["Mastografía", "TAC", "HER2", "Hormonas"],
+    answer: 0,
+    explanation: "Mastografía."
+  },
+  {
+    q: "Sífilis primaria:",
+    options: ["Primaria", "Secundaria", "Latente", "Terciaria"],
+    answer: 0,
+    explanation: "Chancro indoloro."
+  },
+  {
+    q: "Prueba inicial sífilis:",
+    options: ["Cultivo", "VDRL", "Western blot", "ELISA"],
+    answer: 1,
+    explanation: "VDRL/RPR."
+  },
+  {
+    q: "Confirmatoria sífilis:",
+    options: ["VDRL", "Western blot", "FTA-ABS", "Hibridación"],
+    answer: 2,
+    explanation: "FTA-ABS."
+  },
+  {
+    q: "Vacuna VPH bivalente:",
+    options: ["11/16", "16/18/31/33", "11/18", "16/18"],
+    answer: 3,
+    explanation: "16 y 18."
+  },
+  {
+    q: "Endometriosis diagnóstico definitivo:",
+    options: ["USG", "RM", "Laparoscopia", "HSG"],
+    answer: 2,
+    explanation: "Laparoscopia."
+  },
+  {
+    q: "Sangrado postmenopausia inicial:",
+    options: ["PAP", "Biopsia", "USG TV", "Histeroscopia"],
+    answer: 2,
+    explanation: "USG transvaginal inicial."
+  },
+  {
+    q: "Vaginosis mecanismo:",
+    options: ["Protozoario", "Anaerobios", "Virus", "Gonococo"],
+    answer: 1,
+    explanation: "Sobrecrecimiento anaerobio."
+  },
+  {
+    q: "Amenorrea + galactorrea estudio inicial:",
+    options: ["RMN", "Prolactina", "USG", "TSH"],
+    answer: 1,
+    explanation: "Prolactina sérica."
+  },
+  {
+    q: "Incontinencia sin urgencia:",
+    options: ["Urgencia", "Rebose", "Esfuerzo", "Funcional"],
+    answer: 2,
+    explanation: "Esfuerzo."
+  },
+  {
+    q: "Condilomas:",
+    options: ["16/10", "18/16", "6/11", "31"],
+    answer: 2,
+    explanation: "VPH 6 y 11."
+  },
+  {
+    q: "Endometriosis mecanismo:",
+    options: ["Metaplasia", "Menstruación retrógrada", "Hematógena", "Genética"],
+    answer: 1,
+    explanation: "Teoría más aceptada."
+  },
+  {
+    q: "Cáncer endometrio postmenopausia:",
+    options: ["Biopsia", "Histerectomía", "TAC", "Marcadores"],
+    answer: 0,
+    explanation: "Biopsia endometrial."
+  },
+  {
+    q: "EPI secuela más común:",
+    options: ["Candida", "Gardnerella", "Chlamydia", "VPH"],
+    answer: 2,
+    explanation: "Chlamydia trachomatis."
+  },
+  {
+    q: "Tipo cáncer ovario más frecuente:",
+    options: ["Germinal", "Estromal", "Epitelial", "Metastásico"],
+    answer: 2,
+    explanation: "Epitelial."
+  },
+  {
+    q: "Tricomoniasis:",
+    options: ["Bacteria", "Protozoario", "Virus", "Hongo"],
+    answer: 0,
+    explanation: "Trichomonas vaginalis (protozoario)."
+  }
 ];
 
 let currentQuestion = 0;
 let score = 0;
 let answered = false;
 
-const questionEl = document.getElementById('question');
-const answersEl = document.getElementById('answers');
-const counterEl = document.getElementById('counter');
-const scoreEl = document.getElementById('score');
-const explanationEl = document.getElementById('explanation');
-const nextBtn = document.getElementById('nextBtn');
+const questionEl = document.getElementById("question");
+const answersEl = document.getElementById("answers");
+const counterEl = document.getElementById("counter");
+const scoreEl = document.getElementById("score");
+const explanationEl = document.getElementById("explanation");
 
 function loadQuestion() {
   answered = false;
-  nextBtn.disabled = true;
-  explanationEl.style.display = 'none';
-
   const q = questions[currentQuestion];
 
-  counterEl.textContent = `Pregunta ${currentQuestion + 1} de ${questions.length}`;
+  counterEl.textContent = `Pregunta ${currentQuestion + 1} / ${questions.length}`;
   questionEl.textContent = q.q;
 
-  answersEl.innerHTML = '';
+  answersEl.innerHTML = "";
+  explanationEl.style.display = "none";
+  document.getElementById("nextBtn").disabled = true;
 
-  const classes = ['a','b','c','d','e'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "answer";
+    btn.textContent = opt;
 
-  q.options.forEach((option, index) => {
-    const btn = document.createElement('button');
-    btn.classList.add('answer', classes[index]);
-    btn.textContent = `${String.fromCharCode(65 + index)}) ${option}`;
-    btn.onclick = () => selectAnswer(index, btn);
+    btn.onclick = () => selectAnswer(i, btn);
+
     answersEl.appendChild(btn);
   });
 }
 
-function selectAnswer(index, btn) {
-  if(answered) return;
+function selectAnswer(i, btn) {
+  if (answered) return;
   answered = true;
 
   const q = questions[currentQuestion];
-  const buttons = document.querySelectorAll('.answer');
 
-  buttons.forEach((b, i) => {
-    if(i === q.answer) {
-      b.classList.add('correct');
-    }
-  });
-
-  if(index === q.answer) {
+  if (i === q.answer) {
+    btn.classList.add("correct");
     score++;
-    scoreEl.textContent = `Puntaje: ${score}`;
   } else {
-    btn.classList.add('incorrect');
+    btn.classList.add("incorrect");
   }
 
-  explanationEl.innerHTML = `<strong>Explicación:</strong> ${q.explanation}`;
-  explanationEl.style.display = 'block';
+  scoreEl.textContent = "Puntaje: " + score;
+  explanationEl.style.display = "block";
+  explanationEl.textContent = q.explanation;
 
-  nextBtn.disabled = false;
+  document.getElementById("nextBtn").disabled = false;
 }
 
 function nextQuestion() {
   currentQuestion++;
 
-  if(currentQuestion >= questions.length) {
-    showFinal();
+  if (currentQuestion >= questions.length) {
+    document.getElementById("quiz-screen").style.display = "none";
+    document.getElementById("final-screen").style.display = "block";
+    document.getElementById("final-score").textContent =
+      `Puntaje final: ${score} / ${questions.length}`;
     return;
   }
 
   loadQuestion();
 }
 
-function showFinal() {
-  document.getElementById('quiz-screen').style.display = 'none';
-  document.getElementById('final-screen').style.display = 'block';
-
-  const percent = ((score / questions.length) * 100).toFixed(1);
-
-  document.getElementById('final-score').innerHTML = `Resultado: ${score}/${questions.length}<br>${percent}%`;
-}
-
 function restartQuiz() {
   currentQuestion = 0;
   score = 0;
-  scoreEl.textContent = 'Puntaje: 0';
-
-  document.getElementById('quiz-screen').style.display = 'block';
-  document.getElementById('final-screen').style.display = 'none';
-
+  document.getElementById("quiz-screen").style.display = "block";
+  document.getElementById("final-screen").style.display = "none";
   loadQuestion();
 }
 
 loadQuestion();
 </script>
+
 </body>
 </html>
