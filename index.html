@@ -44,19 +44,21 @@
     }  
   
     button.answer {  
-      border: none;  
-      border-radius: 12px;  
-      padding: 15px;  
-      cursor: pointer;  
-      font-size: 16px;  
-      font-weight: bold;  
-      color: white;  
-    }  
-  
-    .a { background: #e53935; }  
-    .b { background: #1e88e5; }  
-    .c { background: #43a047; }  
-    .d { background: #fbc02d; color: black; }  
+     border: none;
+  border-radius: 12px;
+  padding: 15px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  transition: 0.2s;
+}
+
+/* colores por posición usando nth-child */
+.answers button:nth-child(1) { background: #e53935; }
+.answers button:nth-child(2) { background: #1e88e5; }
+.answers button:nth-child(3) { background: #43a047; }
+.answers button:nth-child(4) { background: #fbc02d; color: black; }
   
     .correct { outline: 4px solid #00ff99; }  
     .incorrect { outline: 4px solid #ff1744; }  
